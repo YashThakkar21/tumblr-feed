@@ -6,13 +6,31 @@
 import UIKit
 import Nuke
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        print("🔥 numberOfRowsInSection called with posts count: \(posts.count)")
+        return posts.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let cell = UITableViewCell()
+        let post = posts[indexPath.row]
+        cell.textLabel?.text = "\(post.summary)"
+        
+        
+        print("🔥 cellForRowAt called for row: \(indexPath.row)")
+        return cell
+    }
+    
 
-
+    @IBOutlet weak var tableView: UITableView!
+    private var posts: [Post] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        
+        tableView.dataSource = self
         fetchPosts()
     }
 
@@ -43,8 +61,10 @@ class ViewController: UIViewController {
 
                     let posts = blog.response.posts
 
-
-                    print("✅ We got \(posts.count) posts!")
+                    self?.posts = posts
+                    print("🔥 Fetched and stored \(posts.count) posts")
+                    self?.tableView.reloadData()
+                    
                     for post in posts {
                         print("🍏 Summary: \(post.summary)")
                     }
